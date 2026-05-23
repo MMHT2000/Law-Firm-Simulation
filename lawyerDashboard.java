@@ -1,23 +1,24 @@
-
-
-
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
 
 public class lawyerDashboard extends JFrame implements ActionListener, MouseListener {
     JPanel panel;
-    JLabel wlabel, userNameLabel, passwordLabel,nameLabel,designationLabel,lawyertypLabel,educatioJLabel,casehandledLabel,casewonLabel,caselostLabel,emailLabel;
-    JButton addACaseButton, addALawyerButton, viewCasesButton, viewLawyersButton, showButton, logOutButton;
+    JLabel wlabel, nameLabel, emailLabel, casesLabel;
+    JButton logOutButton, myCasesButton;
     Font myFont, Font1;
     ImageIcon icon;
-    String hiddenPass = "";
+    User user;
+    UserDAO userDAO;
+    CaseDAO caseDAO;
     LawyerLogin ll;
-    addALawyer aal;
-    lawyers lawyers;
+    JTable casesTable;
+    DefaultTableModel tableModel;
 
-    public lawyerDashboard( addALawyer aal, lawyers lawyers, LawyerLogin ll) {
-        super("Lawyer  Dashboard");
+    public lawyerDashboard(User user, LawyerLogin ll) {
+        super("Lawyer Dashboard");
         this.setSize(1280, 720);
         icon = new ImageIcon("images/student.jpg");
         this.setIconImage(icon.getImage());
@@ -25,9 +26,9 @@ public class lawyerDashboard extends JFrame implements ActionListener, MouseList
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.ll = ll;
-        this.lawyers = lawyers;
-        this.aal = aal;
-
+        this.user = user;
+        this.userDAO = new UserDAO();
+        this.caseDAO = new CaseDAO();
 
         myFont = new Font("Cambria", Font.PLAIN, 17);
         Font1 = new Font("Times New Roman", Font.BOLD, 24);
@@ -35,116 +36,100 @@ public class lawyerDashboard extends JFrame implements ActionListener, MouseList
         panel = new JPanel();
         panel.setLayout(null);
 
-        wlabel = new JLabel("Welcome back, " + aal.getUsername() + "!");
-        wlabel.setBounds(550, 50, 300, 50);
+        String displayName = user != null ? user.getFirstName() : "Lawyer";
+
+        wlabel = new JLabel("Welcome back, " + displayName + "!");
+        wlabel.setBounds(550, 20, 300, 30);
         wlabel.setFont(Font1);
         panel.add(wlabel);
 
-        nameLabel = new JLabel("Name: " + aal.getUsername());
-        userNameLabel.setBounds(480, 150, 200, 30);
-        userNameLabel.setFont(myFont);
-        panel.add(userNameLabel);
+        nameLabel = new JLabel("Name: " + user.getFirstName() + " " + user.getLastName());
+        nameLabel.setBounds(480, 60, 200, 30);
+        nameLabel.setFont(myFont);
+        panel.add(nameLabel);
 
-        
-        designationLabel = new JLabel("Designation: " + aal.getDesignation());
-        designationLabel.setBounds(480, 190, 350, 30);
-        designationLabel.setFont(myFont);
-        panel.add(designationLabel);
-
-        lawyertypLabel = new JLabel("Lawyer Type: " + aal.getLawyerType());
-        lawyertypLabel.setBounds(480, 230, 200, 30);
-        lawyertypLabel.setFont(myFont);
-        panel.add(lawyertypLabel);
-
-        educatioJLabel = new JLabel("Education: " + aal.getEducation());
-        educatioJLabel.setBounds(480, 270, 200, 30);
-        educatioJLabel.setFont(myFont);
-        panel.add(educatioJLabel);
-
-        casehandledLabel = new JLabel("Case Handled: " + aal.getCasesHandled());
-        casehandledLabel.setBounds(480, 310, 200, 30);
-        casehandledLabel.setFont(myFont);
-        panel.add(casehandledLabel);
-
-        casewonLabel = new JLabel("Case Won: " + aal.getCasesWon());
-        casewonLabel.setBounds(480, 350, 200, 30);
-        casewonLabel.setFont(myFont);
-        panel.add(casewonLabel);
-
-        caselostLabel = new JLabel("Case Lost: " + aal.getCasesLost());
-        caselostLabel.setBounds(480, 390, 200, 30);
-        caselostLabel.setFont(myFont);
-        panel.add(caselostLabel);
-
-        emailLabel = new JLabel("Email: " + aal.getEmail());
-        emailLabel.setBounds(480, 430, 200, 30);
+        emailLabel = new JLabel("Email: " + user.getEmail());
+        emailLabel.setBounds(480, 90, 200, 30);
         emailLabel.setFont(myFont);
         panel.add(emailLabel);
 
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("Case ID");
+        columnNames.add("Case Name");
+        columnNames.add("Client");
+        columnNames.add("Status");
 
+        Vector<Vector<String>> data = getAssignedCases();
+        tableModel = new DefaultTableModel(data, columnNames);
+        casesTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(casesTable);
+        scrollPane.setBounds(480, 130, 300, 150);
+        panel.add(scrollPane);
 
+        casesLabel = new JLabel("Your Assigned Cases:");
+        casesLabel.setBounds(480, 110, 150, 20);
+        panel.add(casesLabel);
 
-       
-        viewCasesButton = new JButton("View cases");
-        viewCasesButton.setBounds(480, 470, 200, 30);
-        viewCasesButton.setFont(myFont);
-        viewCasesButton.setBackground(new Color(0x2596BE));
-        panel.add(viewCasesButton);
-
-        
-
-       
+        myCasesButton = new JButton("View My Cases");
+        myCasesButton.setBounds(540, 300, 160, 30);
+        myCasesButton.setFont(myFont);
+        myCasesButton.setBackground(new Color(0x2596BE));
+        myCasesButton.addActionListener(this);
+        panel.add(myCasesButton);
 
         logOutButton = new JButton("Log out");
-        logOutButton.setBounds(480, 510, 200, 30);
+        logOutButton.setBounds(540, 350, 160, 30);
         logOutButton.setFont(myFont);
         logOutButton.setBackground(new Color(0x2596BE));
+        logOutButton.addActionListener(this);
         panel.add(logOutButton);
 
-        
-        String pass = aal.getPassword();
-        int passLength = pass.length();
-        for (int i = 0; i < passLength; i++) {
-            hiddenPass += '*';
-        }
+        logOutButton.addActionListener(this);
+        myCasesButton.addActionListener(this);
+
+        logOutButton.setFocusable(false);
+        myCasesButton.setFocusable(false);
+
+        JLabel background = new JLabel();
+        ImageIcon bg = new ImageIcon("images\\gf8.jpg");
+        background.setIcon(bg);
+        background.setBounds(0, 0, 1280, 720);
+        panel.add(background);
 
         this.add(panel);
-
-        
-       
-        viewCasesButton.addActionListener(this);
-        logOutButton.addActionListener(this);
-
-        viewCasesButton.setFocusable(false);
-        logOutButton.setFocusable(false);
-
-        
-        // this.setVisible(true);
     }
 
-    public void mouseClicked(MouseEvent me) {
+    private Vector<Vector<String>> getAssignedCases() {
+        Vector<Vector<String>> assignedCases = new Vector<>();
+        java.util.List<Case> cases = caseDAO.getCasesByLawyer(user.getUserId());
+
+        for (Case c : cases) {
+            Vector<String> row = new Vector<>();
+            row.add(String.valueOf(c.getCaseId()));
+            row.add(c.getCaseName() != null ? c.getCaseName() : "");
+            row.add(c.getOpposingParty() != null ? c.getOpposingParty() : "");
+            row.add(c.getStatus() != null ? c.getStatus() : "Active");
+            assignedCases.add(row);
+        }
+
+        return assignedCases;
     }
 
-    public void mouseEntered(MouseEvent me) {
-    }
-
-    public void mouseExited(MouseEvent me) {
-    }
-
-    public void mousePressed(MouseEvent me) {
-        
-    }
-
-    public void mouseReleased(MouseEvent me) {
-       
-    }
+    public void mouseClicked(MouseEvent me) {}
+    public void mouseEntered(MouseEvent me) {}
+    public void mouseExited(MouseEvent me) {}
+    public void mousePressed(MouseEvent me) {}
+    public void mouseReleased(MouseEvent me) {}
 
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
         if (logOutButton.getText().equals(command)) {
             ll.setVisible(true);
             this.setVisible(false);
-        }else{}
-}
-
+        } else if (myCasesButton.getText().equals(command)) {
+            lawyerCaseView lcv = new lawyerCaseView(user, this);
+            lcv.setVisible(true);
+            this.setVisible(false);
+        }
+    }
 }

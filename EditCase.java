@@ -3,40 +3,38 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AddCase extends JFrame implements ActionListener {
+public class EditCase extends JFrame implements ActionListener {
     private JPanel panel;
-    private JLabel userLabel, Cidlabel, clintlabel, opponentlabel, datelabel, casetypelabel, assigendlabel, casestatuslabel, casedislabel;
-    private JTextField Cidtf, clinttf, opponenttf, datetf, casetypetf, assigendtf, casestatustf;
+    private JLabel userLabel, caseIdLabel, clintlabel, opponentlabel, casetypelabel, casestatuslabel, casedislabel;
+    private JTextField caseIdtf, clinttf, opponenttf, casetypetf, casestatustf;
     private JTextArea textArea;
-    private JButton addcase, backToDashboardButton;
+    private JButton editcase, backToDashboardButton;
     private CaseDAO caseDAO;
     private adminDashboard adminDashboard;
     private JLabel image;
     private ImageIcon bg;
 
-    public AddCase(adminDashboard adminDashboard) {
-        super("Add a Case");
+    public EditCase(adminDashboard adminDashboard) {
+        super("Edit a Case");
         this.setSize(1280, 720);
-
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new JPanel();
         panel.setLayout(null);
         this.setLocationRelativeTo(null);
-
-        this.caseDAO = new CaseDAO();
         this.adminDashboard = adminDashboard;
+        this.caseDAO = new CaseDAO();
 
         Font Font1 = new Font("Times New Roman", Font.BOLD, 16);
         Font Font2 = new Font("Times New Roman", Font.BOLD, 14);
 
-        userLabel = new JLabel("Add a new Case ");
+        userLabel = new JLabel("Edit Case ");
         userLabel.setBounds(550, 80, 120, 30);
         userLabel.setFont(Font1);
         panel.add(userLabel);
 
-        Cidlabel = new JLabel("Case Number:");
-        Cidlabel.setBounds(300, 120, 120, 30);
-        panel.add(Cidlabel);
+        caseIdLabel = new JLabel("Case ID:");
+        caseIdLabel.setBounds(300, 120, 120, 30);
+        panel.add(caseIdLabel);
 
         clintlabel = new JLabel("Client ID:");
         clintlabel.setBounds(300, 160, 120, 30);
@@ -46,25 +44,17 @@ public class AddCase extends JFrame implements ActionListener {
         opponentlabel.setBounds(300, 200, 120, 30);
         panel.add(opponentlabel);
 
-        datelabel = new JLabel("Date:");
-        datelabel.setBounds(300, 240, 120, 30);
-        panel.add(datelabel);
-
         casetypelabel = new JLabel("Case Type:");
-        casetypelabel.setBounds(300, 280, 120, 30);
+        casetypelabel.setBounds(300, 240, 120, 30);
         panel.add(casetypelabel);
 
-        assigendlabel = new JLabel("Assigned Lawyer ID:");
-        assigendlabel.setBounds(300, 320, 120, 30);
-        panel.add(assigendlabel);
-
         casestatuslabel = new JLabel("Case Status:");
-        casestatuslabel.setBounds(300, 360, 120, 30);
+        casestatuslabel.setBounds(300, 280, 120, 30);
         panel.add(casestatuslabel);
 
-        Cidtf = new JTextField();
-        Cidtf.setBounds(430, 120, 120, 30);
-        panel.add(Cidtf);
+        caseIdtf = new JTextField();
+        caseIdtf.setBounds(430, 120, 120, 30);
+        panel.add(caseIdtf);
 
         clinttf = new JTextField();
         clinttf.setBounds(430, 160, 120, 30);
@@ -74,20 +64,12 @@ public class AddCase extends JFrame implements ActionListener {
         opponenttf.setBounds(430, 200, 120, 30);
         panel.add(opponenttf);
 
-        datetf = new JTextField();
-        datetf.setBounds(430, 240, 120, 30);
-        panel.add(datetf);
-
         casetypetf = new JTextField();
-        casetypetf.setBounds(430, 280, 120, 30);
+        casetypetf.setBounds(430, 240, 120, 30);
         panel.add(casetypetf);
 
-        assigendtf = new JTextField();
-        assigendtf.setBounds(430, 320, 120, 30);
-        panel.add(assigendtf);
-
         casestatustf = new JTextField();
-        casestatustf.setBounds(430, 360, 120, 30);
+        casestatustf.setBounds(430, 280, 120, 30);
         panel.add(casestatustf);
 
         casedislabel = new JLabel("Case Description:");
@@ -100,12 +82,12 @@ public class AddCase extends JFrame implements ActionListener {
         textArea.setLineWrap(true);
         panel.add(textArea);
 
-        addcase = new JButton("Add Case");
-        addcase.setBackground(new Color(0x2596BE));
-        addcase.setOpaque(true);
-        addcase.setBounds(470, 530, 160, 30);
-        addcase.addActionListener(this);
-        panel.add(addcase);
+        editcase = new JButton("Edit Case");
+        editcase.setBackground(new Color(0x2596BE));
+        editcase.setOpaque(true);
+        editcase.setBounds(470, 530, 160, 30);
+        editcase.addActionListener(this);
+        panel.add(editcase);
 
         backToDashboardButton = new JButton("Back to Dashboard");
         backToDashboardButton.setBackground(new Color(0x2596BE));
@@ -119,7 +101,6 @@ public class AddCase extends JFrame implements ActionListener {
         image.setIcon(bg);
         image.setBounds(0, 0, 1280, 720);
         panel.add(image);
-
         this.add(panel);
     }
 
@@ -128,48 +109,51 @@ public class AddCase extends JFrame implements ActionListener {
         if (backToDashboardButton.getText().equals(command)) {
             adminDashboard.setVisible(true);
             this.setVisible(false);
-        } else if (addcase.getText().equals(command)) {
-            String caseNumber = Cidtf.getText();
+        } else if (editcase.getText().equals(command)) {
+            String caseIdStr = caseIdtf.getText();
             String clientStr = clinttf.getText();
             String opponent = opponenttf.getText();
-            String dateOpened = datetf.getText();
             String caseType = casetypetf.getText();
-            String assignedLawyerStr = assigendtf.getText();
             String caseStatus = casestatustf.getText();
             String caseDescription = textArea.getText();
 
+            int caseId = 0;
             int clientId = 0;
-            int assignedLawyerId = 0;
 
             try {
-                clientId = Integer.parseInt(clientStr);
+                caseId = Integer.parseInt(caseIdStr);
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Invalid Client ID");
+                JOptionPane.showMessageDialog(this, "Invalid Case ID");
                 return;
             }
 
-            try {
-                assignedLawyerId = Integer.parseInt(assignedLawyerStr);
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Invalid Lawyer ID");
+            Case existingCase = caseDAO.getCaseById(caseId);
+            if (existingCase == null) {
+                JOptionPane.showMessageDialog(this, "Case not found");
                 return;
             }
 
-            Case c = new Case();
-            c.setCaseNumber(caseNumber);
-            c.setClientId(clientId);
-            c.setPrimaryLawyerId(assignedLawyerId);
-            c.setOpposingParty(opponent);
-            c.setCaseType(caseType);
-            c.setStatus(caseStatus);
-            c.setDescription(caseDescription);
+            if (!clientStr.isEmpty()) {
+                try {
+                    clientId = Integer.parseInt(clientStr);
+                    existingCase.setClientId(clientId);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid Client ID");
+                    return;
+                }
+            }
 
-            if (caseDAO.addCase(c)) {
-                JOptionPane.showMessageDialog(this, "Case Added Successfully");
+            existingCase.setOpposingParty(opponent);
+            existingCase.setCaseType(caseType);
+            existingCase.setStatus(caseStatus);
+            existingCase.setDescription(caseDescription);
+
+            if (caseDAO.updateCase(existingCase)) {
+                JOptionPane.showMessageDialog(this, "Case Updated Successfully");
                 adminDashboard.setVisible(true);
                 this.setVisible(false);
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to add case");
+                JOptionPane.showMessageDialog(this, "Failed to update case");
             }
         }
     }

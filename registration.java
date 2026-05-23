@@ -1,6 +1,3 @@
-
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class registration extends JFrame implements ActionListener {
     JPanel panel;
-    JLabel URLabel, FNLabel, LNLabel, UNlabel, ELabel, PASSLabel ,image;
+    JLabel URLabel, FNLabel, LNLabel, UNlabel, ELabel, PASSLabel, image;
     JTextField FNTF, LNTF, UNTF, ETF;
     JPasswordField passwordTF;
     JButton createbutton, BTLButton;
@@ -16,9 +13,9 @@ public class registration extends JFrame implements ActionListener {
     Font Font1 = new Font("Times New Roman", Font.BOLD, 18);
     ClientLogin cl;
     WelcomePage welcomePage;
-    users us;
+    private UserDAO userDAO;
 
-    public registration(users us, ClientLogin cl, WelcomePage welcomePage) {
+    public registration(ClientLogin cl, WelcomePage welcomePage) {
         super("User Registration");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,12 +23,11 @@ public class registration extends JFrame implements ActionListener {
 
         this.welcomePage = welcomePage;
         this.cl = cl;
-        this.us = us;
+        this.userDAO = new UserDAO();
 
         panel = new JPanel();
         panel.setLayout(null);
 
-        
         URLabel = new JLabel("User Registration ");
         URLabel.setBounds(540, 80, 200, 30);
         URLabel.setFont(Font1);
@@ -92,45 +88,40 @@ public class registration extends JFrame implements ActionListener {
         BTLButton.setBounds(540, 360, 160, 30);
         panel.add(BTLButton);
 
-        image =new JLabel();
-        bg=new ImageIcon("images\\gf3.jpg");
-        //setIconImage(bg.getImage());
+        image = new JLabel();
+        bg = new ImageIcon("images\\gf3.jpg");
         image.setIcon(bg);
-        image.setBounds(0,0,1280,720);
+        image.setBounds(0, 0, 1280, 720);
         panel.add(image);
 
         this.add(panel);
     }
 
-    
-    public void actionPerformed(ActionEvent ae){
-		String command = ae.getActionCommand();
-		if(createbutton.getText().equals(command)){
-			
-			String fName = FNTF.getText();
-			String lName = LNTF.getText();
-			String username = UNTF.getText();
-			String email = ETF.getText();
-			String password =new String (passwordTF.getPassword());
-			
-			
-			
-			
-			if((!fName.isEmpty()) && (!lName.isEmpty()) && (!username.isEmpty()) && (!email.isEmpty()) && (!password.isEmpty())){
-				client c = new client(username, password, email, fName, lName);
-				us.addUser(c);
-				JOptionPane.showMessageDialog(this, "Registration successfull. Please login to continue.");
-				
-				cl.setVisible(true);
-				this.setVisible(false);
-			}else{
-				JOptionPane.showMessageDialog(this, "Information missing!");
-			}
-			
-		}else if(BTLButton.getText().equals(command)){
-			ClientLogin cl = new ClientLogin(welcomePage, us);
-			cl.setVisible(true);
-			this.setVisible(false);
-		}else{}
-	}
+    public void actionPerformed(ActionEvent ae) {
+        String command = ae.getActionCommand();
+        if (createbutton.getText().equals(command)) {
+            String fName = FNTF.getText();
+            String lName = LNTF.getText();
+            String username = UNTF.getText();
+            String email = ETF.getText();
+            String password = new String(passwordTF.getPassword());
+
+            if ((!fName.isEmpty()) && (!lName.isEmpty()) && (!username.isEmpty()) && (!email.isEmpty()) && (!password.isEmpty())) {
+                User user = new User(username, password, email, fName, lName, "client");
+                if (userDAO.addUser(user)) {
+                    JOptionPane.showMessageDialog(this, "Registration successful. Please login to continue.");
+                    cl.setVisible(true);
+                    this.setVisible(false);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Registration failed. Username may already exist.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Information missing!");
+            }
+        } else if (BTLButton.getText().equals(command)) {
+            ClientLogin loginPage = new ClientLogin(welcomePage);
+            loginPage.setVisible(true);
+            this.setVisible(false);
+        }
+    }
 }

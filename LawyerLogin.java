@@ -1,6 +1,3 @@
-
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,15 +12,13 @@ public class LawyerLogin extends JFrame implements ActionListener {
     private JPanel panel;
     Font myFont, myFont2;
     private WelcomePage welcomePage;
+    private UserDAO userDAO;
     ImageIcon bg;
-    private lawyers lawyers;
-    
 
-    public LawyerLogin(WelcomePage welcomePage, lawyers lawyers) {
+    public LawyerLogin(WelcomePage welcomePage) {
         super("Lawyer Login Portal");
         this.welcomePage = welcomePage;
-        this.lawyers = lawyers;
-    
+        this.userDAO = new UserDAO();
 
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,15 +84,11 @@ public class LawyerLogin extends JFrame implements ActionListener {
         loginButton.setFocusable(false);
         homebutton.setFocusable(false);
 
-        image =new JLabel();
-        bg=new ImageIcon("images\\gf7.jpg");
-        //setIconImage(bg.getImage());
+        image = new JLabel();
+        bg = new ImageIcon("images\\gf7.jpg");
         image.setIcon(bg);
-        image.setBounds(0,0,1280,720);
+        image.setBounds(0, 0, 1280, 720);
         panel.add(image);
-
-        loginButton.setFocusable(false);
-        homebutton.setFocusable(false);
 
         this.add(panel);
     }
@@ -105,34 +96,29 @@ public class LawyerLogin extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
         if (RegBtn.getText().equals(command)) {
-            registration2 r1 = new registration2(lawyers, this, welcomePage);
+            registration2 r1 = new registration2(this, welcomePage);
             r1.setVisible(true);
             this.setVisible(false);
         } else if (homebutton.getText().equals(command)) {
             welcomePage.setVisible(true);
             this.setVisible(false);
-        }else if(loginButton.getText().equals(command)){
-			lawyer l = null;
-			String name = usernameField.getText();
+        } else if (loginButton.getText().equals(command)) {
+            String name = usernameField.getText();
             String pass = passwordTF.getText();
 
-			
-			int index = lawyers.lawyerExists(name);
-			if(index!=-1){
-				l = lawyers.checkCredentials(index,pass); //checks username and password
-                if(l!=null){
-                    JOptionPane.showMessageDialog(this, "Login successfull!");
-                    dashBoard2 db = new dashBoard2(l,lawyers,this);
-                    db.setVisible(true);
-                    this.setVisible(false);
-				}else{
-					JOptionPane.showMessageDialog(this, "Password incorrect!");
-				}
-			}else{
-				JOptionPane.showMessageDialog(this, "User doesn't exist!");
-			}
-		}else {
-            JOptionPane.showMessageDialog(this, "Invalid input!");}
+            User user = userDAO.authenticate(name, pass);
+            if (user != null && "lawyer".equals(user.getRole())) {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                lawyerDashboard db = new lawyerDashboard(user, this);
+                db.setVisible(true);
+                this.setVisible(false);
+            } else if (user != null) {
+                JOptionPane.showMessageDialog(this, "This account is not a lawyer account!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid username or password!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid input!");
+        }
     }
-    }
-
+}

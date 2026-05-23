@@ -1,5 +1,3 @@
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,11 +12,13 @@ public class AdminLogin extends JFrame implements ActionListener {
     private ImageIcon bg;
     private JPanel panel;
     private WelcomePage welcomePage;
+    private UserDAO userDAO;
     Font myFont, myFont2;
 
     public AdminLogin(WelcomePage welcomePage) {
         super("Admin Login Portal");
         this.welcomePage = welcomePage;
+        this.userDAO = new UserDAO();
 
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,8 +29,6 @@ public class AdminLogin extends JFrame implements ActionListener {
 
         myFont = new Font("Century", Font.ITALIC, 24);
         myFont2 = new Font("Times New Roman", Font.BOLD, 17);
-
-
 
         weLabel = new JLabel("WELCOME BACK! ");
         weLabel.setBounds(550, 200, 300, 30);
@@ -46,7 +44,7 @@ public class AdminLogin extends JFrame implements ActionListener {
 
         passwordLabel = new JLabel("Password: ");
         passwordLabel.setBounds(525, 300, 100, 30);
-        passwordLabel.setForeground(Color.white);   
+        passwordLabel.setForeground(Color.white);
         passwordLabel.setFont(myFont2);
         panel.add(passwordLabel);
 
@@ -75,14 +73,11 @@ public class AdminLogin extends JFrame implements ActionListener {
         panel.add(homebutton);
         homebutton.addActionListener(this);
 
-       
-
         loginButton.setFocusable(false);
         homebutton.setFocusable(false);
 
         image =new JLabel();
         bg=new ImageIcon("images\\gf1.jpg");
-        //setIconImage(bg.getImage());
         image.setIcon(bg);
         image.setBounds(0,0,1280,720);
         panel.add(image);
@@ -95,19 +90,20 @@ public class AdminLogin extends JFrame implements ActionListener {
         if (command.equals("Login")) {
             String username = usernameField.getText();
             String password = passwordTF.getText();
-            Admin a = new Admin(username, password);
-            if (a.getUsername().equals("admin") && a.getPassword().equals("admin")) {
+
+            User user = userDAO.authenticate(username, password);
+            if (user != null && "admin".equals(user.getRole())) {
                 JOptionPane.showMessageDialog(null, "Login Successful!");
                 this.setVisible(false);
+                Admin a = new Admin(user);
                 adminDashboard ad = new adminDashboard(a, this);
                 ad.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(null, "Invalid username or password!");
+                JOptionPane.showMessageDialog(null, "Invalid username, password, or not an admin account!");
             }
         } else if (command.equals("Home")) {
             this.setVisible(false);
             welcomePage.setVisible(true);
         }
-
     }
 }

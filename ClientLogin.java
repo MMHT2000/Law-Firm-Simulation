@@ -1,6 +1,3 @@
-
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,15 +11,14 @@ public class ClientLogin extends JFrame implements ActionListener {
     private Font Font1 = new Font("Times New Roman", Font.BOLD, 14);
     private JPanel panel;
     private WelcomePage welcomePage;
+    private UserDAO userDAO;
     private ImageIcon bg;
-    private users us;
     Font myFont, myFont2;
 
-
-    public ClientLogin(WelcomePage welcomePage, users us) {
+    public ClientLogin(WelcomePage welcomePage) {
         super("Client Login Portal");
         this.welcomePage = welcomePage;
-        this.us = us;
+        this.userDAO = new UserDAO();
 
         setSize(1280, 720);
         this.setLocationRelativeTo(null);
@@ -90,7 +86,6 @@ public class ClientLogin extends JFrame implements ActionListener {
 
         image =new JLabel();
         bg=new ImageIcon("images\\gf7.jpg");
-        //setIconImage(bg.getImage());
         image.setIcon(bg);
         image.setBounds(0,0,1280,720);
         panel.add(image);
@@ -101,35 +96,29 @@ public class ClientLogin extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
         if (RegBtn.getText().equals(command)) {
-            registration r1 = new registration(us, this, welcomePage);
+            registration r1 = new registration(this, welcomePage);
             r1.setVisible(true);
             this.setVisible(false);
         } else if (homebutton.getText().equals(command)) {
             welcomePage.setVisible(true);
             this.setVisible(false);
-        }else if(loginButton.getText().equals(command)){
-			client c = null;
-			String name = usernameField.getText();
+        } else if (loginButton.getText().equals(command)) {
+            String name = usernameField.getText();
             String pass = passwordTF.getText();
 
-			
-			int index = us.userExists(name);
-			if(index!=-1){
-				c = us.checkCredentials(index,pass); //checks username and password
-                if(c!=null){
-                    JOptionPane.showMessageDialog(this, "Login successfull!");
-                    dashBoard db = new dashBoard(c,us,this);
-                    db.setVisible(true);
-                    this.setVisible(false);
-				}else{
-					JOptionPane.showMessageDialog(this, "Password incorrect!");
-				}
-			}else{
-				JOptionPane.showMessageDialog(this, "User doesn't exist!");
-			}
-		}else {
-            JOptionPane.showMessageDialog(this, "Invalid input!");}
+            User user = userDAO.authenticate(name, pass);
+            if (user != null && "client".equals(user.getRole())) {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                dashBoard db = new dashBoard(user, this);
+                db.setVisible(true);
+                this.setVisible(false);
+            } else if (user != null) {
+                JOptionPane.showMessageDialog(this, "This account is not a client account!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid username or password!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid input!");
+        }
     }
 }
-
-

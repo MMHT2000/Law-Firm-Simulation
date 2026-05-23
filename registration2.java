@@ -1,6 +1,3 @@
-
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class registration2 extends JFrame implements ActionListener {
     JPanel panel;
-    JLabel URLabel, FNLabel, LNLabel, UNlabel, ELabel, PASSLabel ,image;
+    JLabel URLabel, FNLabel, LNLabel, UNlabel, ELabel, PASSLabel, image;
     JTextField FNTF, LNTF, UNTF, ETF;
     JPasswordField passwordTF;
     JButton createbutton, BTLButton;
@@ -16,9 +13,9 @@ public class registration2 extends JFrame implements ActionListener {
     Font Font1 = new Font("Times New Roman", Font.BOLD, 18);
     LawyerLogin ll;
     WelcomePage welcomePage;
-    lawyers lawyers;
+    private UserDAO userDAO;
 
-    public registration2(lawyers lawyers, LawyerLogin ll, WelcomePage welcomePage) {
+    public registration2(LawyerLogin ll, WelcomePage welcomePage) {
         super("Lawyer Registration");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,13 +23,12 @@ public class registration2 extends JFrame implements ActionListener {
 
         this.welcomePage = welcomePage;
         this.ll = ll;
-        this.lawyers = lawyers;
+        this.userDAO = new UserDAO();
 
         panel = new JPanel();
         panel.setLayout(null);
 
-        
-        URLabel = new JLabel("User Registration ");
+        URLabel = new JLabel("Lawyer Registration ");
         URLabel.setBounds(540, 80, 200, 30);
         URLabel.setFont(Font1);
         panel.add(URLabel);
@@ -92,45 +88,40 @@ public class registration2 extends JFrame implements ActionListener {
         BTLButton.setBounds(540, 360, 160, 30);
         panel.add(BTLButton);
 
-        image =new JLabel();
-        bg=new ImageIcon("images\\gf3.jpg");
-        //setIconImage(bg.getImage());
+        image = new JLabel();
+        bg = new ImageIcon("images\\gf3.jpg");
         image.setIcon(bg);
-        image.setBounds(0,0,1280,720);
+        image.setBounds(0, 0, 1280, 720);
         panel.add(image);
 
         this.add(panel);
     }
 
-    
-    public void actionPerformed(ActionEvent ae){
-		String command = ae.getActionCommand();
-		if(createbutton.getText().equals(command)){
-			
-			String fName = FNTF.getText();
-			String lName = LNTF.getText();
-			String username = UNTF.getText();
-			String email = ETF.getText();
-			String password =new String (passwordTF.getPassword());
-			
-			
-			
-			
-			if((!fName.isEmpty()) && (!lName.isEmpty()) && (!username.isEmpty()) && (!email.isEmpty()) && (!password.isEmpty())){
-				lawyer l = new lawyer(fName, lName, username, email, password);
-				lawyers.addLawyer(l);
-				JOptionPane.showMessageDialog(this, "Registration successfull. Please login to continue.");
-				
-				ll.setVisible(true);
-				this.setVisible(false);
-			}else{
-				JOptionPane.showMessageDialog(this, "Information missing!");
-			}
-			
-		}else if(BTLButton.getText().equals(command)){
-			LawyerLogin ll = new LawyerLogin(welcomePage, lawyers);
-			ll.setVisible(true);
-			this.setVisible(false);
-		}else{}
-	}
+    public void actionPerformed(ActionEvent ae) {
+        String command = ae.getActionCommand();
+        if (createbutton.getText().equals(command)) {
+            String fName = FNTF.getText();
+            String lName = LNTF.getText();
+            String username = UNTF.getText();
+            String email = ETF.getText();
+            String password = new String(passwordTF.getPassword());
+
+            if ((!fName.isEmpty()) && (!lName.isEmpty()) && (!username.isEmpty()) && (!email.isEmpty()) && (!password.isEmpty())) {
+                User user = new User(username, password, email, fName, lName, "lawyer");
+                if (userDAO.addUser(user)) {
+                    JOptionPane.showMessageDialog(this, "Registration successful. Please login to continue.");
+                    ll.setVisible(true);
+                    this.setVisible(false);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Registration failed. Username may already exist.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Information missing!");
+            }
+        } else if (BTLButton.getText().equals(command)) {
+            LawyerLogin loginPage = new LawyerLogin(welcomePage);
+            loginPage.setVisible(true);
+            this.setVisible(false);
+        }
+    }
 }

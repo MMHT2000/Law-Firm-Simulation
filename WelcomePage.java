@@ -8,13 +8,9 @@ public class WelcomePage extends JFrame implements ActionListener {
     JLabel welcomeLabel, roleLabel, imageLabel, image;
     JButton ClientBtn, LawyerBtn, AdminBtn;
     ImageIcon Image, bg;
-    private users us;
-    private lawyers lawyers;
 
-    public WelcomePage(users us, lawyers lawyers) {
+    public WelcomePage() {
         super("JMRC & Associates");
-        this.us = us;
-        this.lawyers = lawyers;
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
@@ -35,7 +31,7 @@ public class WelcomePage extends JFrame implements ActionListener {
         Image = new ImageIcon("Images/JMRC.png");
         imageLabel = new JLabel(Image);
         imageLabel.setBounds(520, 160, 256, 256);
-        
+
         panel.add(imageLabel);
 
         roleLabel = new JLabel("I am a/an");
@@ -71,11 +67,10 @@ public class WelcomePage extends JFrame implements ActionListener {
 
         this.setIconImage(Image.getImage());
 
-        image =new JLabel();
-        bg=new ImageIcon("images\\gf10.jpg");
-        //setIconImage(bg.getImage());
+        image = new JLabel();
+        bg = new ImageIcon("images\\gf10.jpg");
         image.setIcon(bg);
-        image.setBounds(0,0,1280,720);
+        image.setBounds(0, 0, 1280, 720);
         panel.add(image);
 
         this.add(panel);
@@ -86,11 +81,11 @@ public class WelcomePage extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String command = ae.getActionCommand();
         if (ClientBtn.getText().equals(command)) {
-            ClientLogin cl = new ClientLogin(this, us);
+            ClientLogin cl = new ClientLogin(this);
             cl.setVisible(true);
             this.setVisible(false);
         } else if (LawyerBtn.getText().equals(command)) {
-            LawyerLogin ll = new LawyerLogin(this, lawyers);
+            LawyerLogin ll = new LawyerLogin(this);
             ll.setVisible(true);
             this.setVisible(false);
         } else if (AdminBtn.getText().equals(command)) {
