@@ -17,96 +17,63 @@ public class dashBoard extends JFrame implements MouseListener, ActionListener {
 
     public dashBoard(User user, ClientLogin cl) {
         super("My dashboard");
-        this.setSize(1280, 720);
-        icon = new ImageIcon("images/student.jpg");
-        this.setIconImage(icon.getImage());
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        UITheme.configureFrame(this, "Client Dashboard");
 
         this.cl = cl;
         this.user = user;
         this.userDAO = new UserDAO();
 
-        myFont = new Font("Cambria", Font.PLAIN, 17);
-        Font1 = new Font("Times New Roman", Font.BOLD, 24);
+        myFont = UITheme.BODY_FONT;
+        Font1 = UITheme.TITLE_FONT;
 
-        panel = new JPanel();
-        panel.setLayout(null);
+        panel = UITheme.backgroundPanel("Images/gf8.jpg");
 
-        wlabel = new JLabel("Welcome back, " + user.getFirstName() + "!");
-        wlabel.setForeground(Color.white);
-        wlabel.setBounds(550, 50, 300, 50);
-        wlabel.setFont(Font1);
-        panel.add(wlabel);
+        JPanel profilePanel = UITheme.surfacePanel(120, 82, 440, 430);
+        JPanel actionPanel = UITheme.surfacePanel(610, 82, 430, 430);
+        panel.add(profilePanel);
+        panel.add(actionPanel);
 
-        nameLabel = new JLabel("Name: " + user.getFirstName() + " " + user.getLastName());
-        nameLabel.setBounds(480, 150, 200, 30);
-        nameLabel.setForeground(Color.white);
-        nameLabel.setFont(myFont);
-        panel.add(nameLabel);
+        wlabel = UITheme.title("Welcome back, " + user.getFirstName() + "!", 28, 24, 360, 42);
+        profilePanel.add(wlabel);
 
-        emailLabel = new JLabel("Email: " + user.getEmail());
-        emailLabel.setBounds(480, 190, 350, 30);
-        emailLabel.setForeground(Color.white);
-        emailLabel.setFont(myFont);
-        panel.add(emailLabel);
+        nameLabel = UITheme.body("Name: " + user.getFirstName() + " " + user.getLastName(), 32, 104, 330, 30);
+        profilePanel.add(nameLabel);
+
+        emailLabel = UITheme.body("Email: " + user.getEmail(), 32, 146, 360, 30);
+        profilePanel.add(emailLabel);
 
         hiddenPass = "**********";
-        passwordLabel = new JLabel("Password: " + hiddenPass);
-        passwordLabel.setBounds(480, 230, 200, 30);
-        passwordLabel.setForeground(Color.white);
-        passwordLabel.setFont(myFont);
-        panel.add(passwordLabel);
+        passwordLabel = UITheme.body("Password: " + hiddenPass, 32, 188, 210, 30);
+        profilePanel.add(passwordLabel);
 
-        logoutBtn = new JButton("Log out");
-        logoutBtn.setBounds(580, 380, 100, 30);
-        logoutBtn.setBorder(null);
-        logoutBtn.setBackground(new Color(0x2596BE));
-        logoutBtn.addActionListener(this);
-        panel.add(logoutBtn);
-
-        showBtn = new JButton("Show");
-        showBtn.setBounds(680, 230, 80, 30);
-        showBtn.setBorder(null);
-        showBtn.setBackground(new Color(0x2596BE));
+        showBtn = UITheme.primaryButton("Show", 255, 188, 86, 30);
         showBtn.addMouseListener(this);
         showBtn.addActionListener(this);
-        panel.add(showBtn);
+        profilePanel.add(showBtn);
 
-        editBtn = new JButton("Edit profile");
-        editBtn.setBounds(580, 280, 100, 30);
-        editBtn.setBorder(null);
-        editBtn.setBackground(new Color(0x2596BE));
+        editBtn = UITheme.primaryButton("Edit profile", 32, 270, 142, 34);
         editBtn.addActionListener(this);
-        panel.add(editBtn);
+        profilePanel.add(editBtn);
 
-        deleteBtn = new JButton("Delete profile");
-        deleteBtn.setBounds(580, 330, 100, 30);
-        deleteBtn.setBorder(null);
+        deleteBtn = UITheme.primaryButton("Delete profile", 188, 270, 154, 34);
         deleteBtn.addMouseListener(this);
-        deleteBtn.setBackground(new Color(0x2596BE));
         deleteBtn.addActionListener(this);
-        panel.add(deleteBtn);
+        profilePanel.add(deleteBtn);
 
-        myCasesBtn = new JButton("My Cases");
-        myCasesBtn.setBounds(580, 230, 100, 30);
-        myCasesBtn.setBorder(null);
-        myCasesBtn.setBackground(new Color(0x2596BE));
+        logoutBtn = UITheme.primaryButton("Log out", 32, 320, 310, 34);
+        logoutBtn.addActionListener(this);
+        profilePanel.add(logoutBtn);
+
+        actionPanel.add(UITheme.title("Client Services", 28, 24, 320, 42));
+        actionPanel.add(UITheme.body("Track your active matters, review firm updates, and find counsel that matches your budget.", 32, 78, 342, 58));
+
+        myCasesBtn = UITheme.primaryButton("My Cases", 32, 166, 330, 42);
         myCasesBtn.addActionListener(this);
-        panel.add(myCasesBtn);
+        actionPanel.add(myCasesBtn);
 
-        hireLawyerBtn = new JButton("Hire Lawyer");
-        hireLawyerBtn.setBounds(690, 230, 100, 30);
-        hireLawyerBtn.setBorder(null);
-        hireLawyerBtn.setBackground(new Color(0x2596BE));
+        hireLawyerBtn = UITheme.primaryButton("Hire Lawyer", 32, 226, 330, 42);
         hireLawyerBtn.addActionListener(this);
-        panel.add(hireLawyerBtn);
-
-        image = new JLabel();
-        bg = new ImageIcon("images\\gf8.jpg");
-        image.setIcon(bg);
-        image.setBounds(0, 0, 1280, 720);
-        panel.add(image);
+        actionPanel.add(hireLawyerBtn);
 
         this.add(panel);
     }

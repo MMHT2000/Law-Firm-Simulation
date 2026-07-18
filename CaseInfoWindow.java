@@ -15,17 +15,17 @@ public class CaseInfoWindow extends JFrame implements ActionListener {
     private adminDashboard adminDashboard;
 
     public CaseInfoWindow() {
+        this(null);
+    }
+
+    public CaseInfoWindow(adminDashboard adminDashboard) {
         super("Case Information");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.caseDAO = new CaseDAO();
-        initialize();
-    }
-
-    public CaseInfoWindow(adminDashboard adminDashboard) {
-        this();
         this.adminDashboard = adminDashboard;
+        initialize();
     }
 
     private void initialize() {

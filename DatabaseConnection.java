@@ -1,7 +1,7 @@
 import java.sql.*;
 
 public class DatabaseConnection {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/lawfirm_db";
+    private static final String DB_URL = "jdbc:mysql://localhost:3307/lawfirm_db";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
     private static Connection connection = null;

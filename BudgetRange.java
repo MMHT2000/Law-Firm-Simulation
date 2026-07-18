@@ -20,50 +20,35 @@ public class BudgetRange extends JFrame implements ActionListener {
     }
 
     private void initialize() {
-        panel = new JPanel();
-        panel.setLayout(null);
+        panel = UITheme.backgroundPanel("Images/gf8.jpg");
+        JPanel selector = UITheme.surfacePanel(430, 92, 420, 440);
+        panel.add(selector);
 
-        Font font = new Font("Times New Roman", Font.BOLD, 18);
+        Font font = UITheme.BUTTON_FONT;
 
-        label = new JLabel("Select Your Budget Range:");
-        label.setBounds(500, 100, 300, 40);
-        label.setFont(font);
-        label.setForeground(Color.white);
-        panel.add(label);
+        label = UITheme.title("Find Counsel", 72, 34, 300, 42);
+        selector.add(label);
+        selector.add(UITheme.body("Choose a budget range to shortlist lawyers by hourly rate.", 74, 86, 280, 54));
 
-        lowBtn = new JButton("Low Budget ($500-$2000)");
-        lowBtn.setBounds(500, 180, 300, 40);
+        lowBtn = UITheme.primaryButton("Low Budget ($50-$150/hr)", 60, 168, 300, 40);
         lowBtn.setFont(font);
-        lowBtn.setBackground(new Color(0x2596BE));
         lowBtn.addActionListener(this);
-        panel.add(lowBtn);
+        selector.add(lowBtn);
 
-        medBtn = new JButton("Medium Budget ($2000-$5000)");
-        medBtn.setBounds(500, 240, 300, 40);
+        medBtn = UITheme.primaryButton("Medium Budget ($151-$300/hr)", 60, 224, 300, 40);
         medBtn.setFont(font);
-        medBtn.setBackground(new Color(0x2596BE));
         medBtn.addActionListener(this);
-        panel.add(medBtn);
+        selector.add(medBtn);
 
-        highBtn = new JButton("High Budget ($5000+)");
-        highBtn.setBounds(500, 300, 300, 40);
+        highBtn = UITheme.primaryButton("High Budget ($301+/hr)", 60, 280, 300, 40);
         highBtn.setFont(font);
-        highBtn.setBackground(new Color(0x2596BE));
         highBtn.addActionListener(this);
-        panel.add(highBtn);
+        selector.add(highBtn);
 
-        backBtn = new JButton("Back to Dashboard");
-        backBtn.setBounds(500, 360, 300, 40);
+        backBtn = UITheme.primaryButton("Back to Dashboard", 60, 346, 300, 40);
         backBtn.setFont(font);
-        backBtn.setBackground(new Color(0x2596BE));
         backBtn.addActionListener(this);
-        panel.add(backBtn);
-
-        JLabel background = new JLabel();
-        bg = new ImageIcon("images\\gf8.jpg");
-        background.setIcon(bg);
-        background.setBounds(0, 0, 1280, 720);
-        panel.add(background);
+        selector.add(backBtn);
 
         this.add(panel);
     }

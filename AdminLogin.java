@@ -20,67 +20,47 @@ public class AdminLogin extends JFrame implements ActionListener {
         this.welcomePage = welcomePage;
         this.userDAO = new UserDAO();
 
-        setSize(1280, 720);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
+        UITheme.configureFrame(this, "Admin Login Portal");
 
-        panel = new JPanel();
-        panel.setLayout(null);
+        panel = UITheme.backgroundPanel("Images/gf1.jpg");
+        JPanel loginPanel = UITheme.surfacePanel(470, 150, 340, 360);
+        panel.add(loginPanel);
 
-        myFont = new Font("Century", Font.ITALIC, 24);
-        myFont2 = new Font("Times New Roman", Font.BOLD, 17);
+        myFont = UITheme.TITLE_FONT;
+        myFont2 = UITheme.BODY_FONT;
 
-        weLabel = new JLabel("WELCOME BACK! ");
-        weLabel.setBounds(550, 200, 300, 30);
-        weLabel.setForeground(Color.white);
-        weLabel.setFont(myFont);
-        panel.add(weLabel);
+        weLabel = UITheme.title("Managing Partner", 36, 28, 270, 38);
+        loginPanel.add(weLabel);
 
-        usernameLabel = new JLabel("Username:");
+        usernameLabel = UITheme.body("Username", 42, 98, 120, 26);
         usernameLabel.setFont(myFont2);
-        usernameLabel.setForeground(Color.white);
-        usernameLabel.setBounds(525, 250, 120, 30);
-        panel.add(usernameLabel);
+        loginPanel.add(usernameLabel);
 
-        passwordLabel = new JLabel("Password: ");
-        passwordLabel.setBounds(525, 300, 100, 30);
-        passwordLabel.setForeground(Color.white);
+        passwordLabel = UITheme.body("Password", 42, 150, 100, 26);
         passwordLabel.setFont(myFont2);
-        panel.add(passwordLabel);
+        loginPanel.add(passwordLabel);
 
         usernameField = new JTextField();
-        usernameField.setBounds(675, 250, 100, 30);
-        panel.add(usernameField);
+        usernameField.setBounds(150, 96, 145, 30);
+        loginPanel.add(usernameField);
 
         passwordTF = new JPasswordField();
-        passwordTF.setBounds(675, 300, 100, 30);
+        passwordTF.setBounds(150, 148, 145, 30);
         passwordTF.setEchoChar('*');
-        panel.add(passwordTF);
+        loginPanel.add(passwordTF);
 
-        loginButton = new JButton("Login");
+        loginButton = UITheme.primaryButton("Login", 42, 218, 120, 34);
         loginButton.setFont(myFont2);
-        loginButton.setBackground(new Color(0x2596BE));
-        loginButton.setOpaque(true);
-        loginButton.setBounds(545, 350, 95, 30);
-        panel.add(loginButton);
+        loginPanel.add(loginButton);
         loginButton.addActionListener(this);
 
-        homebutton = new JButton("Home");
+        homebutton = UITheme.primaryButton("Home", 176, 218, 120, 34);
         homebutton.setFont(myFont2);
-        homebutton.setBackground(new Color(0x2596BE));
-        homebutton.setOpaque(true);
-        homebutton.setBounds(650, 350, 95, 30);
-        panel.add(homebutton);
+        loginPanel.add(homebutton);
         homebutton.addActionListener(this);
 
         loginButton.setFocusable(false);
         homebutton.setFocusable(false);
-
-        image =new JLabel();
-        bg=new ImageIcon("images\\gf1.jpg");
-        image.setIcon(bg);
-        image.setBounds(0,0,1280,720);
-        panel.add(image);
 
         this.add(panel);
     }
@@ -103,7 +83,11 @@ public class AdminLogin extends JFrame implements ActionListener {
             }
         } else if (command.equals("Home")) {
             this.setVisible(false);
-            welcomePage.setVisible(true);
+            if (welcomePage != null) {
+                welcomePage.setVisible(true);
+            } else {
+                new WelcomePage().setVisible(true);
+            }
         }
     }
 }

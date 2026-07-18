@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class adminDashboard extends JFrame implements MouseListener, ActionListener {
     JPanel panel;
     JLabel wlabel, userNameLabel, emailLabel, image;
-    JButton addACaseButton, addALawyerButton, viewCasesButton, editCaseButton, deleteCaseButton, viewLawyersButton, logOutButton;
+    JButton addACaseButton, addALawyerButton, viewCasesButton, editCaseButton, deleteCaseButton, viewLawyersButton, operationsHubButton, demoDataButton, logOutButton;
     Font myFont, Font1;
     ImageIcon icon;
     AdminLogin al;
@@ -16,91 +16,58 @@ public class adminDashboard extends JFrame implements MouseListener, ActionListe
 
     public adminDashboard(Admin a, AdminLogin al) {
         super("My dashboard");
-        this.setSize(1280, 720);
-        icon = new ImageIcon("images/student.jpg");
-        this.setIconImage(icon.getImage());
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        UITheme.configureFrame(this, "Admin Dashboard");
 
         this.al = al;
         this.user = a.getUser();
         this.caseDAO = new CaseDAO();
         this.userDAO = new UserDAO();
 
-        myFont = new Font("Cambria", Font.PLAIN, 17);
-        Font1 = new Font("Times New Roman", Font.BOLD, 24);
+        myFont = UITheme.BODY_FONT;
+        Font1 = UITheme.TITLE_FONT;
 
-        panel = new JPanel();
-        panel.setLayout(null);
+        panel = UITheme.backgroundPanel("Images/gf8.jpg");
+        JPanel shell = UITheme.surfacePanel(410, 66, 460, 560);
+        panel.add(shell);
 
         String displayName = user != null ? user.getFirstName() : "Admin";
         String displayEmail = user != null ? user.getEmail() : "";
 
-        wlabel = new JLabel("Welcome back, " + displayName + "!");
-        wlabel.setBounds(550, 50, 300, 50);
-        wlabel.setForeground(Color.white);
-        wlabel.setFont(Font1);
-        panel.add(wlabel);
+        wlabel = UITheme.title("Firm Command Center", 42, 26, 360, 42);
+        shell.add(wlabel);
 
-        userNameLabel = new JLabel("Username: " + (user != null ? user.getUsername() : ""));
-        userNameLabel.setBounds(550, 150, 200, 30);
-        userNameLabel.setForeground(Color.white);
-        userNameLabel.setFont(myFont);
-        panel.add(userNameLabel);
+        userNameLabel = UITheme.body("Admin: " + displayName + " (" + (user != null ? user.getUsername() : "") + ")", 46, 84, 330, 28);
+        shell.add(userNameLabel);
 
-        emailLabel = new JLabel("Email: " + displayEmail);
-        emailLabel.setBounds(550, 190, 350, 30);
-        emailLabel.setForeground(Color.white);
-        emailLabel.setFont(myFont);
-        panel.add(emailLabel);
+        emailLabel = UITheme.body("Email: " + displayEmail, 46, 118, 350, 28);
+        shell.add(emailLabel);
 
-        addACaseButton = new JButton("Add a case");
-        addACaseButton.setBounds(550, 230, 200, 30);
-        addACaseButton.setFont(myFont);
-        addACaseButton.setBackground(new Color(0x2596BE));
-        panel.add(addACaseButton);
+        addACaseButton = UITheme.primaryButton("Add a case", 46, 176, 170, 36);
+        shell.add(addACaseButton);
 
-        viewCasesButton = new JButton("View cases");
-        viewCasesButton.setBounds(550, 270, 200, 30);
-        viewCasesButton.setFont(myFont);
-        viewCasesButton.setBackground(new Color(0x2596BE));
-        panel.add(viewCasesButton);
+        viewCasesButton = UITheme.primaryButton("View cases", 236, 176, 170, 36);
+        shell.add(viewCasesButton);
 
-        editCaseButton = new JButton("Edit a case");
-        editCaseButton.setBounds(550, 310, 200, 30);
-        editCaseButton.setFont(myFont);
-        editCaseButton.setBackground(new Color(0x2596BE));
-        panel.add(editCaseButton);
+        editCaseButton = UITheme.primaryButton("Edit a case", 46, 230, 170, 36);
+        shell.add(editCaseButton);
 
-        deleteCaseButton = new JButton("Delete a case");
-        deleteCaseButton.setBounds(550, 350, 200, 30);
-        deleteCaseButton.setFont(myFont);
-        deleteCaseButton.setBackground(new Color(0x2596BE));
-        panel.add(deleteCaseButton);
+        deleteCaseButton = UITheme.primaryButton("Delete a case", 236, 230, 170, 36);
+        shell.add(deleteCaseButton);
 
-        addALawyerButton = new JButton("Add a lawyer");
-        addALawyerButton.setBounds(550, 390, 200, 30);
-        addALawyerButton.setFont(myFont);
-        addALawyerButton.setBackground(new Color(0x2596BE));
-        panel.add(addALawyerButton);
+        addALawyerButton = UITheme.primaryButton("Add a lawyer", 46, 300, 170, 36);
+        shell.add(addALawyerButton);
 
-        viewLawyersButton = new JButton("View lawyers");
-        viewLawyersButton.setBounds(550, 430, 200, 30);
-        viewLawyersButton.setFont(myFont);
-        viewLawyersButton.setBackground(new Color(0x2596BE));
-        panel.add(viewLawyersButton);
+        viewLawyersButton = UITheme.primaryButton("View lawyers", 236, 300, 170, 36);
+        shell.add(viewLawyersButton);
 
-        logOutButton = new JButton("Log out");
-        logOutButton.setBounds(550, 560, 200, 30);
-        logOutButton.setFont(myFont);
-        logOutButton.setBackground(new Color(0x2596BE));
-        panel.add(logOutButton);
+        operationsHubButton = UITheme.primaryButton("Operations Hub", 46, 360, 170, 36);
+        shell.add(operationsHubButton);
 
-        image = new JLabel();
-        bg = new ImageIcon("images\\gf8.jpg");
-        image.setIcon(bg);
-        image.setBounds(0, 0, 1280, 720);
-        panel.add(image);
+        demoDataButton = UITheme.primaryButton("Load Suits Demo", 236, 360, 170, 36);
+        shell.add(demoDataButton);
+
+        logOutButton = UITheme.primaryButton("Log out", 46, 456, 360, 36);
+        shell.add(logOutButton);
 
         this.add(panel);
 
@@ -110,6 +77,8 @@ public class adminDashboard extends JFrame implements MouseListener, ActionListe
         editCaseButton.addActionListener(this);
         deleteCaseButton.addActionListener(this);
         viewLawyersButton.addActionListener(this);
+        operationsHubButton.addActionListener(this);
+        demoDataButton.addActionListener(this);
         logOutButton.addActionListener(this);
 
         addACaseButton.setFocusable(false);
@@ -118,6 +87,8 @@ public class adminDashboard extends JFrame implements MouseListener, ActionListe
         editCaseButton.setFocusable(false);
         deleteCaseButton.setFocusable(false);
         viewLawyersButton.setFocusable(false);
+        operationsHubButton.setFocusable(false);
+        demoDataButton.setFocusable(false);
         logOutButton.setFocusable(false);
     }
 
@@ -150,7 +121,7 @@ public class adminDashboard extends JFrame implements MouseListener, ActionListe
             al.setVisible(true);
             this.setVisible(false);
         } else if (viewCasesButton.getText().equals(command)) {
-            CaseInfoWindow ciw = new CaseInfoWindow();
+            CaseInfoWindow ciw = new CaseInfoWindow(this);
             ciw.setVisible(true);
             this.setVisible(false);
         } else if (editCaseButton.getText().equals(command)) {
@@ -162,9 +133,21 @@ public class adminDashboard extends JFrame implements MouseListener, ActionListe
             dc.setVisible(true);
             this.setVisible(false);
         } else if (viewLawyersButton.getText().equals(command)) {
-            LawyerInfoWindow liw = new LawyerInfoWindow();
+            LawyerInfoWindow liw = new LawyerInfoWindow(this);
             liw.setVisible(true);
             this.setVisible(false);
+        } else if (operationsHubButton.getText().equals(command)) {
+            OperationsHub hub = new OperationsHub(this, user);
+            hub.setVisible(true);
+            this.setVisible(false);
+        } else if (demoDataButton.getText().equals(command)) {
+            DemoDataSeeder seeder = new DemoDataSeeder();
+            int affected = seeder.seedSuitsInspiredDemo();
+            if (affected > 0) {
+                JOptionPane.showMessageDialog(this, "Loaded Suits-inspired demo data. Default demo password: password");
+            } else {
+                JOptionPane.showMessageDialog(this, "Demo data was not loaded. Check MySQL/XAMPP and database.sql setup.");
+            }
         }
     }
 }

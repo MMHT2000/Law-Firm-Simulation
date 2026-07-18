@@ -119,6 +119,78 @@ public class UserDAO {
         return users;
     }
 
+    public List<LawyerProfile> getLawyersForBudget(String budgetRange) {
+        List<LawyerProfile> lawyers = new ArrayList<>();
+        String sql = "SELECT u.user_id, u.username, u.email, u.first_name, u.last_name, " +
+                "l.specialties, l.years_experience, l.hourly_rate, l.active_cases " +
+                "FROM users u LEFT JOIN lawyers l ON u.user_id = l.user_id " +
+                "WHERE u.role = 'lawyer' AND (? = 0 OR COALESCE(l.hourly_rate, 0) BETWEEN ? AND ?) " +
+                "ORDER BY COALESCE(l.active_cases, 0), COALESCE(l.hourly_rate, 0), u.first_name";
+
+        double minRate = getMinRateForBudget(budgetRange);
+        double maxRate = getMaxRateForBudget(budgetRange);
+        int includeAll = maxRate == 0 ? 0 : 1;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, includeAll);
+            stmt.setDouble(2, minRate);
+            stmt.setDouble(3, maxRate);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                LawyerProfile lawyer = new LawyerProfile();
+                lawyer.setUserId(rs.getInt("user_id"));
+                lawyer.setUsername(rs.getString("username"));
+                lawyer.setEmail(rs.getString("email"));
+                lawyer.setName((safe(rs.getString("first_name")) + " " + safe(rs.getString("last_name"))).trim());
+                if (lawyer.getName().isEmpty()) {
+                    lawyer.setName(lawyer.getUsername());
+                }
+                lawyer.setSpecialties(rs.getString("specialties"));
+                lawyer.setYearsExperience(rs.getInt("years_experience"));
+                lawyer.setHourlyRate(rs.getDouble("hourly_rate"));
+                lawyer.setActiveCases(rs.getInt("active_cases"));
+                lawyers.add(lawyer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lawyers;
+    }
+
+    private double getMinRateForBudget(String budgetRange) {
+        if (budgetRange == null) {
+            return 0;
+        }
+        if (budgetRange.startsWith("Medium")) {
+            return 151;
+        }
+        if (budgetRange.startsWith("High")) {
+            return 301;
+        }
+        return 50;
+    }
+
+    private double getMaxRateForBudget(String budgetRange) {
+        if (budgetRange == null) {
+            return 0;
+        }
+        if (budgetRange.startsWith("Low")) {
+            return 150;
+        }
+        if (budgetRange.startsWith("Medium")) {
+            return 300;
+        }
+        if (budgetRange.startsWith("High")) {
+            return 100000;
+        }
+        return 0;
+    }
+
+    private String safe(String value) {
+        return value != null ? value : "";
+    }
+
     public boolean updateUser(User user) {
         String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, phone = ?, address = ? WHERE user_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

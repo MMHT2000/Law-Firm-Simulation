@@ -14,6 +14,7 @@ public class LawyerFilter extends JFrame implements ActionListener {
     private String budgetRange;
     private ImageIcon bg;
     private UserDAO userDAO;
+    private JLabel summaryLabel;
 
     public LawyerFilter(dashBoard dashboard, String budgetRange) {
         super("Lawyers in Budget Range");
@@ -31,7 +32,10 @@ public class LawyerFilter extends JFrame implements ActionListener {
         columnNames.add("ID");
         columnNames.add("Name");
         columnNames.add("Email");
-        columnNames.add("Username");
+        columnNames.add("Specialties");
+        columnNames.add("Experience");
+        columnNames.add("Hourly Rate");
+        columnNames.add("Active Cases");
 
         Vector<Vector<String>> data = readLawyersByBudget();
 
@@ -40,38 +44,37 @@ public class LawyerFilter extends JFrame implements ActionListener {
         lawyerTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
         JScrollPane scrollPane = new JScrollPane(lawyerTable);
-        scrollPane.setBounds(140, 50, 1000, 500);
+        scrollPane.setBounds(100, 150, 1080, 390);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
+        JPanel panel = UITheme.backgroundPanel("Images/bg4.jpg");
+        JPanel header = UITheme.surfacePanel(100, 42, 1080, 82);
+        panel.add(header);
 
-        backBtn = new JButton("Back to Dashboard");
-        backBtn.setBounds(540, 570, 200, 30);
-        backBtn.setBackground(new Color(0x2596BE));
+        summaryLabel = UITheme.title("Lawyers for " + budgetRange, 24, 18, 900, 38);
+        header.add(summaryLabel);
+
+        backBtn = UITheme.primaryButton("Back to Dashboard", 490, 570, 300, 36);
         backBtn.addActionListener(this);
         panel.add(backBtn);
 
         panel.add(scrollPane);
-
-        JLabel background = new JLabel();
-        bg = new ImageIcon("images\\gf8.jpg");
-        background.setIcon(bg);
-        background.setBounds(0, 0, 1280, 720);
-        panel.add(background);
 
         this.add(panel);
     }
 
     private Vector<Vector<String>> readLawyersByBudget() {
         Vector<Vector<String>> lawyersData = new Vector<>();
-        List<User> lawyers = userDAO.getUsersByRole("lawyer");
+        List<LawyerProfile> lawyers = userDAO.getLawyersForBudget(budgetRange);
 
-        for (User u : lawyers) {
+        for (LawyerProfile lawyer : lawyers) {
             Vector<String> row = new Vector<>();
-            row.add(String.valueOf(u.getUserId()));
-            row.add(u.getFirstName() + " " + u.getLastName());
-            row.add(u.getEmail() != null ? u.getEmail() : "");
-            row.add(u.getUsername());
+            row.add(String.valueOf(lawyer.getUserId()));
+            row.add(lawyer.getName());
+            row.add(lawyer.getEmail() != null ? lawyer.getEmail() : "");
+            row.add(lawyer.getSpecialties() != null ? lawyer.getSpecialties() : "General Practice");
+            row.add(lawyer.getYearsExperience() + " years");
+            row.add(lawyer.getHourlyRate() > 0 ? "$" + String.format("%.2f", lawyer.getHourlyRate()) : "Not set");
+            row.add(String.valueOf(lawyer.getActiveCases()));
             lawyersData.add(row);
         }
 

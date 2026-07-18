@@ -1,32 +1,31 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
-public class LawyerInfoWindow extends JFrame {
+public class LawyerInfoWindow extends JFrame implements ActionListener {
     private JTable lawyerInfoTable;
-    JLabel image;
     private DefaultTableModel tableModel;
-    ImageIcon bg;
     private JPanel panel;
     private UserDAO userDAO;
+    private adminDashboard adminDashboard;
+    private JButton backBtn;
 
     public LawyerInfoWindow() {
+        this(null);
+    }
+
+    public LawyerInfoWindow(adminDashboard adminDashboard) {
         super("Lawyer Information");
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.userDAO = new UserDAO();
-
-        panel = new JPanel();
-        panel.setLayout(null);
         this.setLocationRelativeTo(null);
+        this.userDAO = new UserDAO();
+        this.adminDashboard = adminDashboard;
 
-        image = new JLabel();
-        bg = new ImageIcon("images\\bg4.jpg");
-        image.setIcon(bg);
-        image.setBounds(0, 0, 1280, 720);
-        panel.add(image);
-
+        panel = UITheme.backgroundPanel("Images/bg4.jpg");
         initialize();
     }
 
@@ -40,11 +39,17 @@ public class LawyerInfoWindow extends JFrame {
 
         tableModel = new DefaultTableModel(data, columnNames);
         lawyerInfoTable = new JTable(tableModel);
+        lawyerInfoTable.setRowHeight(26);
 
         JScrollPane scrollPane = new JScrollPane(lawyerInfoTable);
-        scrollPane.setBounds(140, 50, 1000, 500);
+        scrollPane.setBounds(140, 70, 1000, 470);
         panel.add(scrollPane);
-        panel.add(image);
+
+        if (adminDashboard != null) {
+            backBtn = UITheme.primaryButton("Back to Dashboard", 540, 570, 220, 36);
+            backBtn.addActionListener(this);
+            panel.add(backBtn);
+        }
 
         this.add(panel);
     }
@@ -66,4 +71,10 @@ public class LawyerInfoWindow extends JFrame {
         return allLawyers;
     }
 
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == backBtn && adminDashboard != null) {
+            adminDashboard.setVisible(true);
+            this.setVisible(false);
+        }
+    }
 }

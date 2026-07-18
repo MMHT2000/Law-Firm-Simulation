@@ -1,56 +1,108 @@
-# Law-Firm-Simulation
+# Law Firm Simulation
 
-## Overview
+A Java Swing desktop law-firm management simulation with a Suits-inspired corporate-law theme. The app supports admin, lawyer, and client portals backed by a MySQL database through XAMPP.
 
-The Legal System Project is a Java Swing-based application that provides a simple interface for lawyers, clients, and administrators to manage legal cases. This project demonstrates the use of Java Swing for building a graphical user interface (GUI) and how to connect it with backend logic.
+## Current Features
 
-## Features
+- Role-based portals for Admin, Lawyer, and Client.
+- Client and lawyer account creation/login.
+- Admin dashboard for cases, lawyers, demo data, and firm operations.
+- Client dashboard with profile management, case view, and budget-based lawyer matching.
+- Lawyer dashboard with assigned cases and access to firm operations.
+- Operations Hub with tabs for:
+  - Overview
+  - Matters
+  - Intake
+  - Calendar/events
+  - Billing
+  - Time entries
+  - Documents
+  - Messages
+  - Reports
+- Suits-inspired demo data loader with lawyers, clients, corporate matters, events, invoices, documents, and messages.
+- Expanded database schema for conflict checks, related contacts, tasks, matter notes, expenses, payments, trust ledger, and audit logs.
 
-- **Welcome Page:**
-  - Buttons: Lawyer, Client, Admin
-  - Opens respective login portals for each user type
+## Requirements
 
-- **Lawyer Login Portal:**
-  - Username and password entry
-  - Takes to Lawyer Dashboard upon login
+- JDK installed and available from the terminal.
+- XAMPP with MySQL running on port `3307`.
+- `mysql-connector-j-8.4.0.jar` in the project root.
 
-- **Client Login Portal:**
-  - Username and password entry
-  - Takes to Client Dashboard upon login
-  - Option to register for a new account
+## Database Setup
 
-- **Client Registration Portal:**
-  - Account creation with user details
+Start XAMPP MySQL on port `3307`, then load the schema:
 
-- **Admin Login Portal:**
-  - Username and password entry
-  - Takes to Admin Dashboard upon login
+```bat
+C:\xampp\mysql\bin\mysql.exe -h 127.0.0.1 -P 3307 -u root --execute="source F:/Law-Firm-Simulation/database.sql"
+```
 
-- **Client Dashboard:**
-  - Option to hire a lawyer
-  - Navigates to budget ranges page
+The app connects to:
 
-- **Admin Dashboard:**
-  - Buttons: Add a Case, Edit a Case, Add a Lawyer, Edit a Lawyer
-  - Opens respective windows for case and lawyer management
+```text
+jdbc:mysql://localhost:3307/lawfirm_db
+```
 
-- **Add a Case:**
-  - Form to add a new case with relevant details
+## Build
 
-- **Add a Lawyer:**
-  - Form to add a new lawyer with relevant details
+From the project root:
 
-## Getting Started
+```bat
+javac *.java
+```
 
-### Prerequisites
+## Run
 
-- Java Development Kit (JDK)
-- IntelliJ IDEA or any Java IDE
+Use the XAMPP run script:
 
-### Installation
+```bat
+run-xampp.bat
+```
 
-1. Clone the repository:
+This launches Java with the MySQL connector on the classpath:
 
-   ```bash
-   git clone https://github.com/MMHT2000/Law-Firm-Simulation.git
+```bat
+java -cp ".;mysql-connector-j-8.4.0.jar" Start
+```
 
+## Default Login
+
+Admin:
+
+```text
+Username: admin
+Password: admin
+```
+
+After logging in as admin, click **Load Suits Demo** to seed demo lawyers, clients, matters, events, invoices, time entries, documents, and messages.
+
+Demo users created by the seeder use:
+
+```text
+Password: password
+```
+
+Example demo lawyer usernames:
+
+- `harvey`
+- `mike`
+- `jessica`
+- `louis`
+- `rachel`
+- `katrina`
+
+## Important Files
+
+- `Start.java`: app entry point.
+- `DatabaseConnection.java`: MySQL connection config.
+- `database.sql`: schema and default admin data.
+- `run-xampp.bat`: recommended launcher.
+- `UITheme.java`: shared visual styling.
+- `DemoDataSeeder.java`: Suits-inspired demo data.
+- `OperationsHub.java`: firm-wide operations screen.
+- `UserDAO.java`, `CaseDAO.java`, `FirmOperationsDAO.java`: database access.
+
+## Notes
+
+- The project currently uses plain Java Swing with no build tool.
+- Compiled `.class` files are present in the repository because the original project tracked them.
+- If login or registration fails, confirm XAMPP MySQL is running on port `3307` and launch with `run-xampp.bat`.

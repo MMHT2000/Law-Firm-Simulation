@@ -7,7 +7,7 @@ import java.util.Vector;
 public class lawyerDashboard extends JFrame implements ActionListener, MouseListener {
     JPanel panel;
     JLabel wlabel, nameLabel, emailLabel, casesLabel;
-    JButton logOutButton, myCasesButton;
+    JButton logOutButton, myCasesButton, operationsHubButton;
     Font myFont, Font1;
     ImageIcon icon;
     User user;
@@ -77,8 +77,15 @@ public class lawyerDashboard extends JFrame implements ActionListener, MouseList
         myCasesButton.addActionListener(this);
         panel.add(myCasesButton);
 
+        operationsHubButton = new JButton("Operations Hub");
+        operationsHubButton.setBounds(540, 350, 160, 30);
+        operationsHubButton.setFont(myFont);
+        operationsHubButton.setBackground(new Color(0x2596BE));
+        operationsHubButton.addActionListener(this);
+        panel.add(operationsHubButton);
+
         logOutButton = new JButton("Log out");
-        logOutButton.setBounds(540, 350, 160, 30);
+        logOutButton.setBounds(540, 400, 160, 30);
         logOutButton.setFont(myFont);
         logOutButton.setBackground(new Color(0x2596BE));
         logOutButton.addActionListener(this);
@@ -86,9 +93,11 @@ public class lawyerDashboard extends JFrame implements ActionListener, MouseList
 
         logOutButton.addActionListener(this);
         myCasesButton.addActionListener(this);
+        operationsHubButton.addActionListener(this);
 
         logOutButton.setFocusable(false);
         myCasesButton.setFocusable(false);
+        operationsHubButton.setFocusable(false);
 
         JLabel background = new JLabel();
         ImageIcon bg = new ImageIcon("images\\gf8.jpg");
@@ -129,6 +138,10 @@ public class lawyerDashboard extends JFrame implements ActionListener, MouseList
         } else if (myCasesButton.getText().equals(command)) {
             lawyerCaseView lcv = new lawyerCaseView(user, this);
             lcv.setVisible(true);
+            this.setVisible(false);
+        } else if (operationsHubButton.getText().equals(command)) {
+            OperationsHub hub = new OperationsHub(this, user);
+            hub.setVisible(true);
             this.setVisible(false);
         }
     }

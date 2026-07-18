@@ -2,7 +2,7 @@
 
 //package com.JMRC;
 
-public class client extends user {
+public class client extends User {
     
 
     public client(String username, String password, String email, String fName, String lName) {

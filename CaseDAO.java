@@ -90,11 +90,14 @@ public class CaseDAO {
 
     public List<Case> getCasesByLawyer(int lawyerId) {
         List<Case> cases = new ArrayList<>();
-        String sql = "SELECT * FROM cases WHERE primary_lawyer_id = ? OR FIND_IN_SET(?, co_counsel_ids)";
+        String sql = "SELECT c.* FROM cases c " +
+                "LEFT JOIN lawyers l ON c.primary_lawyer_id = l.lawyer_id " +
+                "WHERE c.primary_lawyer_id = ? OR l.user_id = ? OR FIND_IN_SET(?, c.co_counsel_ids)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, lawyerId);
-            stmt.setString(2, String.valueOf(lawyerId));
+            stmt.setInt(2, lawyerId);
+            stmt.setString(3, String.valueOf(lawyerId));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Case c = new Case();
